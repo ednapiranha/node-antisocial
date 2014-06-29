@@ -18,7 +18,6 @@ describe('validate', function () {
   });
 
   it('should encrypt and decrypt a message', function (done) {
-    console.log('public key ', receiver.pk().toString());
     var encrypted = a.encrypt('This is a test for the sender', receiver.pk());
     console.log('encrypted message. ', encrypted);
 
