@@ -1,22 +1,54 @@
 'use strict';
 
 var level = require('level');
-var ursa = require('ursa');
+var sodium = require('sodium');
 var chat = require('level-threaded-chat');
 
-var Antisocial = function (privateKeySender) {
-  this.privateKey = privateKeySender;
+var Antisocial = function (options) {
+  var privateKeySender;
+  this.publicKey;
+
+  if (!options) {
+    options = {};
+  }
+
+  this.dbPath = options.dbPath || './db'
+
+  var db = level(this.dbPath, {
+    createIfMissing: true,
+    valueEncoding: 'json'
+  });
+
+  var self = this;
+
+  db.get('sender!keys', function (err, data) {
+    if (err || !data) {
+      var pair = new sodium.Key.Box();
+      self.publicKey = pair.pk();
+      privateKeySender = pair.sk();
+
+      db.put('sender!keys', {
+        pk: self.publicKey,
+        sk: privateKeySender
+      });
+    } else {
+      self.publicKey = data.pk();
+      privateKeySender = data.sk();
+    }
+
+    next(true);
+  });
 
   this.encrypt = function (message, publicKey) {
-    publicKey = ursa.createPublicKey(this.privateKey.toPublicPem());
+    var box = new sodium.Box(this.publicKey, privateKeySender);
 
-    return publicKey.encrypt(new Buffer(message, 'utf8'));
+    return box.encrypt(message, 'utf8');
   };
 
   this.decrypt = function (message, publicKey) {
-    var encoded = new Buffer(message, 'hex');
+    var box = new sodium.Box(this.publicKey, privateKeySender);
 
-    return this.privateKey.decrypt(encoded).toString();
+    return box.decrypt(message, 'utf8');
   };
 };
 
