@@ -1,6 +1,6 @@
 {
   "name": "antisocial",
-  "version": "4.1.1",
+  "version": "4.1.2",
   "description": "encrypted private messaging",
   "main": "index.js",
   "dependencies": {

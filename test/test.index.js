@@ -18,7 +18,7 @@ var msg = '';
 
 describe('validate', function () {
   after(function () {
-    child.exec('rm -rf ./test/db');
+    child.exec('rm -rf ./test/db*');
   });
 
   it('should encrypt a message', function (done) {
