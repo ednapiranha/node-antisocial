@@ -1,12 +1,15 @@
 'use strict';
 
 var level = require('level');
+var crypto = require('crypto');
 var sodium = require('sodium');
-var chat = require('level-threaded-chat');
+var JSONB = require('json-buffer')
+var LevelThreadedChat = require('level-threaded-chat');
 
 var Antisocial = function (options) {
   var privateKeySender;
   this.publicKey;
+  var chat;
 
   if (!options) {
     options = {};
@@ -21,34 +24,75 @@ var Antisocial = function (options) {
 
   var self = this;
 
-  db.get('sender!keys', function (err, data) {
-    if (err || !data) {
-      var pair = new sodium.Key.Box();
-      self.publicKey = pair.pk();
-      privateKeySender = pair.sk();
+  var setKeys = function (next) {
+    db.get('sender!keys', function (err, data) {
+      if (err || !data) {
+        var pair = new sodium.Key.Box();
+        self.publicKey = pair.pk().toString();
+        privateKeySender = pair.sk().toString();
 
-      db.put('sender!keys', {
-        pk: self.publicKey,
-        sk: privateKeySender
+        db.put('sender!keys', {
+          pk: self.publicKey,
+          sk: privateKeySender
+        });
+      } else {
+        console.log('!!! ', data)
+        self.publicKey = data.pk();
+        privateKeySender = data.sk();
+      }
+
+      chat = new LevelThreadedChat(crypto.createHash('md5').update(self.publicKey.toString()).digest('hex'));
+      console.log('loaded chat instance');
+      next(true);
+    });
+  };
+
+  this.encrypt = function (message, publicKey, next) {
+    setKeys(function () {
+      var receiverId = crypto.createHash('md5').update(publicKey.toString()).digest('hex');
+
+      chat.follow(receiverId, function (err, user) {
+        if (err) {
+          next(err);
+          return;
+        }
+
+        var box = new sodium.Box(publicKey, privateKeySender);
+        message = box.encrypt(message, 'utf8');
+
+        chat.addChat(receiverId, JSONB.stringify(message), {
+          media: '',
+          recipients: [receiverId],
+          reply: ''
+        }, function (err, c) {
+          if (err) {
+            next(err);
+            return;
+          }
+
+          next(null, message);
+        });
       });
-    } else {
-      self.publicKey = data.pk();
-      privateKeySender = data.sk();
-    }
-
-    next(true);
-  });
-
-  this.encrypt = function (message, publicKey) {
-    var box = new sodium.Box(this.publicKey, privateKeySender);
-
-    return box.encrypt(message, 'utf8');
+    });
   };
 
   this.decrypt = function (message, publicKey) {
-    var box = new sodium.Box(this.publicKey, privateKeySender);
+    var box = new sodium.Box(publicKey, privateKeySender);
 
-    return box.decrypt(message, 'utf8');
+    return box.decrypt(JSONB.parse(message), 'utf8');
+  };
+
+  this.getChats = function (publicKey, next) {
+    var receiverId = crypto.createHash('md5').update(publicKey.toString()).digest('hex');
+
+    chat.getChats(false, false, function (err, c) {
+      if (err) {
+        next(err);
+        return;
+      }
+
+      next(null, c.chats);
+    });
   };
 };
 

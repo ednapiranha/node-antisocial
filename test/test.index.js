@@ -18,12 +18,17 @@ describe('validate', function () {
   });
 
   it('should encrypt and decrypt a message', function (done) {
-    var encrypted = a.encrypt('This is a test for the sender', receiver.pk());
-    console.log('encrypted message. ', encrypted);
+    a.encrypt('This is a test for the sender', receiver.pk(), function (err, c) {
+      should.exist(c);
 
-    var decrypted = a.decrypt(encrypted, a.publickKey);
-    console.log('decrypted message. ', decrypted);
-    decrypted.should.equal('This is a test for the sender');
-    done();
+      a.getChats(receiver.pk(), function (err, ch) {
+        should.exist(ch[0]);
+
+        var decrypted = a.decrypt(ch[0].value.message, receiver.pk());
+        decrypted.should.equal('This is a test for the sender');
+
+        done();
+      });
+    });
   });
 });

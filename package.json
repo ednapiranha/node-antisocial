@@ -1,14 +1,15 @@
 {
   "name": "antisocial",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "decentralized private messaging",
   "main": "index.js",
   "dependencies": {
     "sodium": "~1.0.11",
-    "level-threaded-chat": "~2.0.x",
+    "level-threaded-chat": "~2.1.1",
     "level": "~0.18.0",
     "level-sublevel": "~5.2.0",
-    "concat-stream": "~1.4.6"
+    "concat-stream": "~1.4.6",
+    "json-buffer": "~2.0.9"
   },
   "devDependencies": {
     "mocha": "~1.20.1",
