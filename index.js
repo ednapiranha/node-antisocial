@@ -8,7 +8,7 @@ var LevelThreadedChat = require('level-threaded-chat');
 var Antisocial = function (options) {
   var privateKeySender;
   this.publicKey;
-  var chat = {};
+  var chat;
 
   if (!options) {
     options = {};
@@ -51,8 +51,8 @@ var Antisocial = function (options) {
     });
   };
 
-  this.encrypt = function (message, publicKey, replyId, next) {
-    setKeys(function () {
+  setKeys(function () {
+    self.encrypt = function (message, publicKey, replyId, next) {
       var receiverId = publicKey.toString();
 
       chat.follow(receiverId, function (err, user) {
@@ -77,25 +77,25 @@ var Antisocial = function (options) {
           next(null, message);
         });
       });
-    });
-  };
+    };
 
-  this.decrypt = function (message, publicKey) {
-    var box = new sodium.Box(publicKey, privateKeySender);
+    self.decrypt = function (message, publicKey) {
+      var box = new sodium.Box(publicKey, privateKeySender);
 
-    return box.decrypt(JSONB.parse(message), 'utf8');
-  };
+      return box.decrypt(JSONB.parse(message), 'utf8');
+    };
 
-  this.getChats = function (next) {
-    chat.getChats(false, false, function (err, c) {
-      if (err) {
-        next(err);
-        return;
-      }
+    self.getChats = function (next) {
+      chat.getChats(false, false, function (err, c) {
+        if (err) {
+          next(err);
+          return;
+        }
 
-      next(null, c.chats);
-    });
-  };
+        next(null, c.chats);
+      });
+    };
+  });
 };
 
 module.exports = Antisocial;
