@@ -33,8 +33,9 @@ where `replyId` is the key of the message you are replying to. Set to false if i
 
 Assuming you have an encrypted message:
 
-    var decrypted = a.decrypt(message, receiverPublicKey);
-    console.log(decrypted);
+    a.decrypt(message, receiverPublicKey, function (err, decrypted) {
+      console.log(decrypted);
+    });
 
 ## Display all chats
 

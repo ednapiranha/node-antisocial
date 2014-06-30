@@ -36,8 +36,9 @@ describe('validate', function () {
   });
 
   it('should decrypt a message', function (done) {
-    var decrypted = a.decrypt(msg, receiver.pk());
-    decrypted.should.equal(originalMsg);
-    done();
+    a.decrypt(msg, receiver.pk(), function (err, decrypted) {
+      decrypted.should.equal(originalMsg);
+      done();
+    });
   });
 });
