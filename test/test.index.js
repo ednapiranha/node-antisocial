@@ -41,4 +41,11 @@ describe('validate', function () {
       done();
     });
   });
+
+  it('should get existing pair', function (done) {
+    a.getChats(function (err, ch) {
+      should.exist(a.publicKey);
+      done();
+    });
+  });
 });

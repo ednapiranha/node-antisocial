@@ -40,8 +40,8 @@ var Antisocial = function (options) {
           sk: privateKeySender
         });
       } else {
-        self.publicKey = data.pk();
-        privateKeySender = data.sk();
+        self.publicKey = data.pk;
+        privateKeySender = data.sk;
       }
 
       self.publicKeyHash = self.publicKey.toString();
