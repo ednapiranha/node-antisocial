@@ -2,6 +2,10 @@
 
 Public key private messaging.
 
+## Disclaimer
+
+This is using node-sodium and don't get in my face about how secure/insecure it is. If there is a problem with that library, please help them fix and then send me a pull request for an updated version. Otherwise, use at your own risk for your random sexts.
+
 ## How to use
 
     var Antisocial = require('antisocial');
