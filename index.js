@@ -25,6 +25,11 @@ var Antisocial = function (options) {
   var self = this;
 
   var setKeys = function (next) {
+    if (self.publicKey && privateKeySender) {
+      next(true);
+      return;
+    }
+
     db.get('sender!keys', function (err, data) {
       if (err || !data) {
         var pair = new sodium.Key.Box();
@@ -47,7 +52,7 @@ var Antisocial = function (options) {
     });
   };
 
-  this.encrypt = function (message, publicKey, next) {
+  this.encrypt = function (message, publicKey, replyId, next) {
     setKeys(function () {
       var receiverId = crypto.createHash('md5').update(publicKey.toString()).digest('hex');
 
@@ -63,7 +68,7 @@ var Antisocial = function (options) {
         chat.addChat(receiverId, JSONB.stringify(message), {
           media: '',
           recipients: [receiverId],
-          reply: ''
+          reply: replyId || ''
         }, function (err, c) {
           if (err) {
             next(err);
