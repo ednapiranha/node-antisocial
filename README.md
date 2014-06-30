@@ -38,6 +38,6 @@ Assuming you have an encrypted message:
 
 ## Display all chats
 
-    a.getChats(receiverPublicKey, function (err, chats) {
+    a.getChats(function (err, chats) {
       console.log(chats);
     });

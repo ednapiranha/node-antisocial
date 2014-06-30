@@ -28,7 +28,7 @@ describe('validate', function () {
   });
 
   it('should get all chats', function (done) {
-    a.getChats(receiver.pk(), function (err, ch) {
+    a.getChats(function (err, ch) {
       should.exist(ch[0]);
       msg = ch[0].value.message;
       done();

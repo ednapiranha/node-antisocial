@@ -86,9 +86,7 @@ var Antisocial = function (options) {
     return box.decrypt(JSONB.parse(message), 'utf8');
   };
 
-  this.getChats = function (publicKey, next) {
-    var receiverId = publicKey.toString();
-
+  this.getChats = function (next) {
     chat.getChats(false, false, function (err, c) {
       if (err) {
         next(err);
