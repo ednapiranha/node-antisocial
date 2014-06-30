@@ -10,7 +10,8 @@ This is using node-sodium and don't get in my face about how secure/insecure it 
 
     var Antisocial = require('antisocial');
     var a = new Antisocial({
-      dbPath: './db'
+      dbPath: './db',
+      chatPath: './db-chat'
     });
 
 This will set up a private and public key pair for you if it hasn't already been created.

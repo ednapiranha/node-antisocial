@@ -7,7 +7,8 @@ var child = require('child_process');
 var should = require('should');
 var Antisocial = require('../index');
 var a = new Antisocial({
-  dbPath: './test/db'
+  dbPath: './test/db',
+  chatPath: './test/db-chat'
 });
 
 var receiver = new sodium.Key.Box();

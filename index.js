@@ -14,7 +14,8 @@ var Antisocial = function (options) {
     options = {};
   }
 
-  this.dbPath = options.dbPath || './db'
+  this.dbPath = options.dbPath || './db';
+  this.chatPath = options.chatPath || './db-chat';
 
   var db = level(this.dbPath, {
     createIfMissing: true,
@@ -46,7 +47,9 @@ var Antisocial = function (options) {
 
       self.publicKeyHash = self.publicKey.toString();
 
-      chat = new LevelThreadedChat(self.publicKeyHash);
+      chat = new LevelThreadedChat(self.publicKeyHash, {
+        dbPath: self.chatPath || './db-chat'
+      });
       next(true);
     });
   };
