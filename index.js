@@ -1,7 +1,6 @@
 'use strict';
 
 var level = require('level');
-var crypto = require('crypto');
 var sodium = require('sodium');
 var JSONB = require('json-buffer')
 var LevelThreadedChat = require('level-threaded-chat');
@@ -45,7 +44,7 @@ var Antisocial = function (options) {
         privateKeySender = data.sk();
       }
 
-      self.publicKeyHash = crypto.createHash('md5').update(self.publicKey.toString()).digest('hex');
+      self.publicKeyHash = self.publicKey.toString();
 
       chat = new LevelThreadedChat(self.publicKeyHash);
       next(true);
@@ -54,7 +53,7 @@ var Antisocial = function (options) {
 
   this.encrypt = function (message, publicKey, replyId, next) {
     setKeys(function () {
-      var receiverId = crypto.createHash('md5').update(publicKey.toString()).digest('hex');
+      var receiverId = publicKey.toString();
 
       chat.follow(receiverId, function (err, user) {
         if (err) {
@@ -88,7 +87,7 @@ var Antisocial = function (options) {
   };
 
   this.getChats = function (publicKey, next) {
-    var receiverId = crypto.createHash('md5').update(publicKey.toString()).digest('hex');
+    var receiverId = publicKey.toString();
 
     chat.getChats(false, false, function (err, c) {
       if (err) {

@@ -19,9 +19,11 @@ You can access your public key with:
 
 Assuming you have the receiver's public key:
 
-    a.encrypt('This is a test for the sender', receiverPublicKey, function (err, c) {
+    a.encrypt('This is a test for the sender', receiverPublicKey, replyId, function (err, c) {
       console.log(c);
     });
+
+where `replyId` is the key of the message you are replying to. Set to false if it is a new message.
 
 ## Decrypt a message
 
