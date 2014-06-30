@@ -9,7 +9,7 @@ var LevelThreadedChat = require('level-threaded-chat');
 var Antisocial = function (options) {
   var privateKeySender;
   this.publicKey;
-  var chat;
+  var chat = {};
 
   if (!options) {
     options = {};
@@ -40,7 +40,9 @@ var Antisocial = function (options) {
         privateKeySender = data.sk();
       }
 
-      chat = new LevelThreadedChat(crypto.createHash('md5').update(self.publicKey.toString()).digest('hex'));
+      self.publicKeyHash = crypto.createHash('md5').update(self.publicKey.toString()).digest('hex');
+
+      chat = new LevelThreadedChat(self.publicKeyHash);
       next(true);
     });
   };

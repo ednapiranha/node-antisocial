@@ -26,7 +26,7 @@ describe('validate', function () {
 
         var decrypted = a.decrypt(ch[0].value.message, receiver.pk());
         decrypted.should.equal('This is a test for the sender');
-
+        console.log(ch[0].value)
         done();
       });
     });
