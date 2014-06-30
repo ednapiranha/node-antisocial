@@ -36,13 +36,11 @@ var Antisocial = function (options) {
           sk: privateKeySender
         });
       } else {
-        console.log('!!! ', data)
         self.publicKey = data.pk();
         privateKeySender = data.sk();
       }
 
       chat = new LevelThreadedChat(crypto.createHash('md5').update(self.publicKey.toString()).digest('hex'));
-      console.log('loaded chat instance');
       next(true);
     });
   };
